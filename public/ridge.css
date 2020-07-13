@@ -617,12 +617,12 @@ dd {
 .w-2\/3 { width: calc( 100% / 1.5 ); }
 .w-auto { width: auto; }
 
-.mw-s { max-width: var(--spacing-s); }
-.mw-m { max-width: var(--spacing-m); }
-.mw-l { max-width: var(--spacing-l); }
-.mw-xl { max-width: var(--spacing-xl); }
-.mw-xxl { max-width: var(--spacing-xxl); }
-.mw-xxxl { max-width: var(--spacing-xxxl); }
+.mw-xs { max-width: var(--spacing-s); }
+.mw-s { max-width: var(--spacing-m); }
+.mw-m { max-width: var(--spacing-l); }
+.mw-l { max-width: var(--spacing-xl); }
+.mw-xl { max-width: var(--spacing-xxl); }
+.mw-xxl { max-width: var(--spacing-xxxl); }
 
 .h-s { height: var(--spacing-s); }
 .h-m { height: var(--spacing-m); }
