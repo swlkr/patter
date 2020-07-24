@@ -28,6 +28,7 @@
 
   --shadow: 1px 1px 4px 2px var(--border);
 
+  --spacing-2xs: 0.25rem;
   --spacing-xxs: 0.25rem;
   --spacing-xs:  0.5rem;
   --spacing-s:   1rem;
@@ -36,4 +37,8 @@
   --spacing-xl:  8rem;
   --spacing-xxl: 16rem;
   --spacing-xxxl: 32rem;
+
+  --spacing-2xl: 16rem;
+  --spacing-3xl: 32rem;
+  --spacing-4xl: 64rem;
 }
