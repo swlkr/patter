@@ -1,7 +1,7 @@
 (use joy)
 
 
-(defn layout [{:body body :request request}]
+(defn layout [{:body body :request req}]
   (text/html
     (doctype :html5)
     [:html {:lang "en"}
@@ -12,7 +12,7 @@
       # TODO: social
       [:meta {:charset "utf-8"}]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-      [:meta {:name "csrf-token" :content (authenticity-token request)}]
+      [:meta {:name "csrf-token" :content (authenticity-token req)}]
 
       # css
       [:link {:rel "stylesheet" :media "(prefers-color-scheme: light), (prefers-color-scheme: none)" :href "ridge-light.css"}]
