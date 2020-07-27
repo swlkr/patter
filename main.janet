@@ -28,8 +28,7 @@
 
 (route :get "/" :home)
 (defn home [request]
-  # (def posts (db/query (slurp "db/sql/timeline.sql")))
-  (def posts (db/fetch-all [:post] :order "created_at desc" :limit 10))
+  (def posts (db/from :post :join/one :account :order "post.created_at desc" :limit 15))
 
   [:vstack {:class "sm:w-100 lg:w-3xl mx-auto"}
    (foreach [post posts]
