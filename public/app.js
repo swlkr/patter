@@ -3,7 +3,7 @@ function setLocalTime() {
   for(var i = 0; i < elements.length; i++) {
     var d = new Date(0);
     d.setUTCSeconds(elements[i].innerText);
-    elements[i].innerText = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+    elements[i].innerText = d.toLocaleDateString("en", { month: "short", day: "2-digit"});
   }
 }
 
