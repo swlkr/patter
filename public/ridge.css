@@ -1048,6 +1048,7 @@ r-modal {
 .bg-border { background-color: var(--border); }
 .bg-code { background-color: var(--code); }
 
+.bg-button { background-color: var(--button); }
 .bg-button-hover { background-color: var(--button-hover); }
 
 .bg-form-placeholder { background-color: var(--form-placeholder); }
