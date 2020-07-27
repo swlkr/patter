@@ -11,4 +11,4 @@
   (os/shell "janet main.janet"))
 
 (phony "watch" []
-  (os/shell "ls | entr -r -d janet main.janet"))
+  (os/shell "find . -name '*.janet' | entr -r -d janet main.janet"))
