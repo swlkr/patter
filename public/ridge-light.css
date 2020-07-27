@@ -12,6 +12,7 @@
   --focus: #0096bfab;
   --border: #dbdbdb;
   --code: var(--main);
+  --danger: #DC4343;
 
   --animation-duration: 0.1s;
   --button: var(--link);
