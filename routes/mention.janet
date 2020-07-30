@@ -35,7 +35,8 @@
   (def name (last (string/split "@" body)))
 
   (text/html
-    (when (nil? (string/find " " name))
+    (when (and (nil? (string/find " " name))
+               (string/find "@" body))
       (def accounts (db/from :account :where ["name like ?" (string name "%")] :order "name"))
 
       [:div {:class "bg-background br-xs mh-2xl overflow-y"}
