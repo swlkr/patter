@@ -144,7 +144,7 @@
                      (map-vals |($ :id))))
 
   # save mentions too
-  (unless errors
+  (unless (or errors (empty? mentions))
     (->> (map |(table :name $) account-names)
          (map |(put $ :post-id (post :id)))
          (map |(put $ :account-id (get accounts (get $ :name))))
