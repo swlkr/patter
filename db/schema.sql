@@ -43,3 +43,11 @@ CREATE TABLE like (
   updated_at integer,
   unique(account_id, post_id)
 )
+CREATE TABLE mention (
+  id integer primary key,
+  post_id integer not null references post(id),
+  account_id integer not null references account(id),
+  name text not null,
+  created_at integer not null default(strftime('%s', 'now')),
+  updated_at integer
+)
