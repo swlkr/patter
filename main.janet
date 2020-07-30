@@ -47,7 +47,8 @@
           [:time {:data-seconds (post :created-at) :class "muted tr"}
            (post :created-at)]]
 
-         [:div (post :body)]
+         [:div {:class "pre-wrap"}
+          (raw (post :body))]
 
          [:hstack
           [:svg {:xmlns "http://www.w3.org/2000/svg" :fill "currentColor" :height "1em" :width "1em" :class "bi bi-reply" :viewBox "0 0 16 16"}
