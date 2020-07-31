@@ -1,6 +1,6 @@
 (use joy)
+(use ../helpers)
 
-(route :get "/mentions/new" :mentions/new)
 (route :post "/mentions/searches" :mentions/searches)
 
 
@@ -46,37 +46,3 @@
 
        [:vstack {:spacing "xs" :class "pa-s br-xs"}
         (map search-result accounts)]])))
-
-
-
-(defn mentions/new [req]
-  (def {:body body} req)
-  (def body (get body :body ""))
-
-  [:div {:x-show "modal"}
-   [:div {:class "fixed left-m right-m top-m bg-background br-xs z-3 max-w-3xl mx-auto" :x-data "{  body: '' }"}
-    (form-with req (action-for :posts/create)
-     [:vstack {:spacing "xs" :class "pa-s"}
-      [:textarea {:rows 7
-                  :name "body"
-                  :autofocus ""
-                  :value body
-                  :x-ref "textarea"
-                  :x-model "body"
-                  :hx-post (url-for :mentions/searches)
-                  :hx-trigger "keyup changed delay:10ms"
-                  :hx-target "#search-results"
-                  :class "b--none w-100 bs--none bg-background focus:bs--none pa-xs"
-                  :placeholder "What's happening?"}]
-
-      [:hstack {:spacing "m"}
-       [:button {:type "submit"
-                 :x-bind:disabled "body.length === 0"
-                 :stretch ""}
-        "Post"]
-
-       [:div {:class "w-m" :x-text "body.length"}]]])
-
-    [:div {:id "search-results"}]]
-   [:div {:class "fixed fill bg-inverse o-75"
-          :x-on:click.prevent "modal = false"}]])

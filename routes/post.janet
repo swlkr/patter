@@ -1,94 +1,81 @@
 (use joy)
-(import uri)
+(use ../helpers)
 
 
-(route :get "/posts" :posts/index)
 (route :get "/posts/new" :posts/new)
 (route :get "/posts/:id" :posts/show)
 (route :post "/posts" :posts/create)
-(route :get "/posts/:id/edit" :posts/edit)
-(route :patch "/posts/:id" :posts/patch)
 (route :delete "/posts/:id" :posts/delete)
 
 
-(defn post [req]
-  (let [id (get-in req [:params :id])]
-    (db/find :post id)))
-
-
-(def params
+(def post-params
   (params :post
     (validates [:body] :required true)
     (permit [:body])))
 
 
-(defn posts/index [req]
-  (let [posts (db/from :post)]
-   [:div
-    [:a {:href (url-for :posts/new)} "New post"]
-
-    [:table
-     [:thead
-      [:tr
-       [:th "id"]
-       [:th "account-id"]
-       [:th "body"]
-       [:th "created-at"]
-       [:th "updated-at"]
-       [:th]
-       [:th]
-       [:th]]]
-     [:tbody
-      (foreach [post posts]
-        [:tr
-          [:td (post :id)]
-          [:td (post :account-id)]
-          [:td (post :body)]
-          [:td (post :created-at)]
-          [:td (post :updated-at)]
-          [:td
-           [:a {:href (url-for :posts/show post)} "Show"]]
-          [:td
-           [:a {:href (url-for :posts/edit post)} "Edit"]]
-          [:td
-           (form-for [req :posts/delete post]
-            [:input {:type "submit" :value "Delete"}])]])]]]))
-
-
 (defn posts/show [req]
-  (def post (post req))
-
-  [:div
-   [:strong "id"]
-   [:div (post :id)]
-
-   [:strong "account-id"]
-   [:div (post :account-id)]
-
-   [:strong "body"]
-   [:div (post :body)]
-
-   [:strong "created-at"]
-   [:div (post :created-at)]
-
-   [:strong "updated-at"]
-   [:div (post :updated-at)]
+  (def {:account account :post post :params params} req)
+  (def post (if post
+              post
+              (db/find-by :post :where {:id (get params :id)}
+                                :join/one :account)))
+  (def account (or account (post :account)))
 
 
-   [:a {:href (url-for :posts/index)} "All posts"]])
+  [:hstack {:spacing "xs" :align-y "top" :class "bg-background pa-xs bn bl bt br-2xs b--solid b--background-alt"}
+   [:img {:src (account :photo-url) :class "br-100 ba b--background-alt sm:w-m md:w-m"}]
+
+   [:vstack {:spacing "s"}
+    [:hstack {:shrink ""}
+     [:div {:class "ellipsis"}
+      (account :display-name)]
+
+     [:div {:class "muted ellipsis"}
+      (string "@" (account :name))]
+
+     [:time {:data-seconds (post :created-at) :class "muted tr"}
+      (post :created-at)]]
+
+    [:div {:class "pre-wrap"}
+     (raw (post :body))]]])
+
+
+(defn posts/form [options]
+  (def {:body body :placeholder placeholder} options)
+
+  [:vstack {:spacing "xs" :class "pa-s" :x-data "{ body: '' }"}
+   [:textarea {:rows 7
+               :name "body"
+               :autofocus ""
+               :value body
+               :x-ref "textarea"
+               :x-model "body"
+               :hx-post (url-for :mentions/searches)
+               :hx-trigger "keyup changed delay:10ms"
+               :hx-target "#search-results"
+               :class "b--none w-100 bs--none bg-background focus:bs--none pa-xs"
+               :placeholder placeholder}]
+
+   [:hstack {:spacing "m"}
+    [:button {:type "submit"
+              :x-bind:disabled "body.length === 0"
+              :stretch ""}
+     "Post"]
+
+    [:div {:class "w-m" :x-text "body.length"}]]
+
+   [:div {:id "search-results"}]])
 
 
 (defn posts/new [req]
-  (def errors (get req :errors {}))
-  (def body (get req :body {}))
+  (def {:body body} req)
+  (def body (get body :body ""))
 
-  (form-for [req :posts/create]
-    [:div
-     [:label {:for "body"} "body"]
-     [:input {:type "text" :name "body" :value (body :body)}]
-     [:small (errors :body)]]
-
-    [:input {:type "submit" :value "Save"}]))
+  (text/html
+    (modal
+     (form-with req (action-for :posts/create)
+       (posts/form {:body body :placeholder "What's up?"})))))
 
 
 (defn finder [str]
@@ -127,7 +114,7 @@
   (def req (-> (update-in req [:body :body] escape)
                (update-in [:body :body] |(mention-linker mentions $))))
 
-  (def post* (-> (params req)
+  (def post* (-> (post-params req)
                  (put :account-id (get-in req [:account :id]))
                  (db/insert)
                  (rescue)))
@@ -155,39 +142,10 @@
     (redirect-to :home)))
 
 
-(defn posts/edit [req]
-  (def post (post req))
-  (def errors (get req :errors {}))
-  (def body (get req :body {}))
-
-  (form-for [req :posts/patch post]
-    [:div
-     [:label {:for "body"} "body"]
-     [:input {:type "text" :name "body" :value (or (body :body)
-                                                   (post :body))}]
-     [:small (errors :body)]]
-
-    [:input {:type "submit" :value "Save"}]))
-
-
-(defn posts/patch [req]
-  (let [post (post req)
-        result (->> (params req)
-                    (merge post)
-                    (db/update)
-                    (rescue))
-        [errors post] result]
-    (if errors
-      (posts/edit (put req :errors errors))
-      (redirect-to :posts/index))))
-
-
 (defn posts/delete [req]
-  (def post (post req))
+  (def {:params params} req)
+  (def post (db/find :post params))
 
   (db/delete post)
 
   (redirect-to :posts/index))
-
-
-(defn posts/mention-suggestions [req])

@@ -2,7 +2,7 @@ function setLocalTime() {
   var elements = document.querySelectorAll('time');
   for(var i = 0; i < elements.length; i++) {
     var d = new Date(0);
-    d.setUTCSeconds(elements[i].innerText);
+    d.setUTCSeconds(elements[i].getAttribute('data-seconds'));
     elements[i].innerText = d.toLocaleDateString("en", { month: "short", day: "2-digit"});
   }
 }
@@ -50,4 +50,9 @@ function setTimeAgo() {
 window.addEventListener('DOMContentLoaded', function() {
   setLocalTime();
   setTimeAgo();
+
+  htmx.on('htmx:afterSettle', function(evt) {
+    setLocalTime();
+    setTimeAgo();
+  })
 });
