@@ -56,3 +56,8 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeAgo();
   })
 });
+
+document.body.addEventListener('htmx:configRequest', function(evt) {
+  var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  evt.detail.parameters['__csrf-token'] = csrfToken;
+});

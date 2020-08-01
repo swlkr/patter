@@ -1,4 +1,5 @@
 (use joy)
+(use ./routes/retweet)
 (use ./routes/reply)
 (use ./routes/like)
 (use ./routes/account)
@@ -87,7 +88,8 @@
     (foreach [post posts]
       (let [account (post :account)
             like (db/find-by :like :where {:post-id (post :id) :account-id (current-account :id)})
-            replies (db/val "select count(id) from reply where post_id = ?" (post :id))]
+            replies (db/val "select count(id) from reply where post_id = ?" (post :id))
+            retweet (db/find-by :retweet :where {:post-id (post :id) :account-id (current-account :id)})]
         [:hstack {:spacing "xs" :align-y "top" :class "bg-background pa-xs bn bl bt br b--solid b--background-alt"}
          [:img {:src (account :photo-url) :class "br-100 ba b--background-alt sm:w-m md:w-m"}]
 
@@ -111,14 +113,23 @@
                 :x-on:click "modal = true"
                 :href "#"}
             [:span {:class "mr-2xs"} replies]
-            [:svg {:xmlns "http://www.w3.org/2000/svg" :fill "currentColor" :height "1.2em" :width "1.2em" :class "bi bi-reply" :viewBox "0 0 16 16"}
-             [:path {:fill-rule "evenodd" :d "M9.502 5.013a.144.144 0 0 0-.202.134V6.3a.5.5 0 0 1-.5.5c-.667 0-2.013.005-3.3.822-.984.624-1.99 1.76-2.595 3.876C3.925 10.515 5.09 9.982 6.11 9.7a8.741 8.741 0 0 1 1.921-.306 7.403 7.403 0 0 1 .798.008h.013l.005.001h.001L8.8 9.9l.05-.498a.5.5 0 0 1 .45.498v1.153c0 .108.11.176.202.134l3.984-2.933a.494.494 0 0 1 .042-.028.147.147 0 0 0 0-.252.494.494 0 0 1-.042-.028L9.502 5.013zM8.3 10.386a7.745 7.745 0 0 0-1.923.277c-1.326.368-2.896 1.201-3.94 3.08a.5.5 0 0 1-.933-.305c.464-3.71 1.886-5.662 3.46-6.66 1.245-.79 2.527-.942 3.336-.971v-.66a1.144 1.144 0 0 1 1.767-.96l3.994 2.94a1.147 1.147 0 0 1 0 1.946l-3.994 2.94a1.144 1.144 0 0 1-1.767-.96v-.667z"}]]]
+            (raw `<svg width="1.1em" height="1.1em" viewBox="0 0 16 16" class="bi bi-chat" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                   <path fill-rule="evenodd" d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"/>
+                 </svg>`)]
 
            [:spacer]
 
-           [:svg {:xmlns "http://www.w3.org/2000/svg" :fill "currentColor" :height "1.2em" :width "1.2em" :class "bi bi-arrow-repeat" :viewBox "0 0 16 16"}
-             [:path {:fill-rule "evenodd" :d "M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"}]
-             [:path {:fill-rule "evenodd" :d "M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"}]]
+           [:a (merge {:href "#"
+                       :hx-swap "outerHTML"}
+                      (if retweet
+                        {:hx-delete (url-for :retweets/delete retweet)}
+                        {:hx-post (url-for :retweets/create post)
+                         :class "bright"}))
+            (raw `<svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-arrow-counterclockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                   <path fill-rule="evenodd" d="M12.83 6.706a5 5 0 0 0-7.103-3.16.5.5 0 1 1-.454-.892A6 6 0 1 1 2.545 5.5a.5.5 0 1 1 .91.417 5 5 0 1 0 9.375.789z"/>
+                   <path fill-rule="evenodd" d="M7.854.146a.5.5 0 0 0-.708 0l-2.5 2.5a.5.5 0 0 0 0 .708l2.5 2.5a.5.5 0 1 0 .708-.708L5.707 3 7.854.854a.5.5 0 0 0 0-.708z"/>
+                 </svg>`)]
+
            [:spacer]
 
            (form-with request {}
