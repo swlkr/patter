@@ -1116,6 +1116,7 @@ r-modal {
 .focus { color: var(--focus); }
 .border { color: var(--border); }
 .code { color: var(--code); }
+.danger { color: var(--danger); }
 
 .button-hover { color: var(--button-hover); }
 
