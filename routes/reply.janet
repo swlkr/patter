@@ -1,5 +1,4 @@
 (use joy)
-(use ../helpers)
 (use ./post)
 
 
@@ -21,10 +20,10 @@
   (def account (post :account))
 
   (text/html
-    (modal
-      (posts/show {:post post})
-      (form-with req (action-for :replies/create post)
-        (posts/form {:body body :placeholder (string "Reply to @" (account :name))})))))
+    [:div
+     (posts/show {:post post})
+     (form-with req (action-for :replies/create post)
+       (posts/form {:body body :placeholder (string "Reply to @" (account :name))}))]))
 
 
 (defn replies/create [req]

@@ -8,20 +8,22 @@
 
 (defn loader [&opt opts]
   (default opts {:color "#fff"})
-  (raw
-    (string/format
-      `<svg class="htmx-indicator mx-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 44 44" stroke="%s">
-        <g fill="none" fill-rule="evenodd" stroke-width="2">
-        <circle cx="22" cy="22" r="1">
-          <animate attributeName="r" begin="0s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
-          <animate attributeName="stroke-opacity" begin="0s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="22" cy="22" r="1">
-          <animate attributeName="r" begin="-0.9s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
-          <animate attributeName="stroke-opacity" begin="-0.9s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
-        </circle>
-        </g>
-      </svg>` (opts :color))))
+  [:vstack {:stretch "" :align-y "center"}
+   [:div {:id "loader"}
+     (raw
+       (string/format
+         `<svg class="htmx-indicator mx-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 44 44" stroke="%s">
+           <g fill="none" fill-rule="evenodd" stroke-width="2">
+           <circle cx="22" cy="22" r="1">
+             <animate attributeName="r" begin="0s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
+             <animate attributeName="stroke-opacity" begin="0s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
+           </circle>
+           <circle cx="22" cy="22" r="1">
+             <animate attributeName="r" begin="-0.9s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
+             <animate attributeName="stroke-opacity" begin="-0.9s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
+           </circle>
+           </g>
+         </svg>` (opts :color)))]])
 
 
 (defn layout [{:body body :request req}]
@@ -48,18 +50,22 @@
       [:script {:src "/app.js" :defer ""}]
       [:script {:src "/htmx.min.js"}]]
 
-     [:body {:x-data "{ modal: true }"
+     [:body {:x-data "{ modal: false }"
              :x-on:keyup.escape.window "modal = false"}
-      [:div {:id "modal"}]
+      [:div {:x-show "modal"}
+        [:div {:id "modal" :class "fixed left-m right-m top-m bg-background br-2xs z-3 max-w-3xl min-h-2xl mx-auto"}
+         (loader {:color "#333"})]
+        [:div {:class "fixed fill bg-inverse o-75"
+               :x-on:click.prevent "modal = false"}]]
 
       body
 
       [:div {:class "fixed bottom-m right-m"}
        [:button {:hx-get (url-for :posts/new)
                  :hx-target "#modal"
+                 :hx-indicator "#loader"
                  :x-on:click "modal = true"
                  :class "br-100 h-l w-l pa-0"}
-        (loader)
         (raw `<svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pen" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M5.707 13.707a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391L10.086 2.5a2 2 0 0 1 2.828 0l.586.586a2 2 0 0 1 0 2.828l-7.793 7.793zM3 11l7.793-7.793a1 1 0 0 1 1.414 0l.586.586a1 1 0 0 1 0 1.414L5 13l-3 1 1-3z"/>
                 <path fill-rule="evenodd" d="M9.854 2.56a.5.5 0 0 0-.708 0L5.854 5.855a.5.5 0 0 1-.708-.708L8.44 1.854a1.5 1.5 0 0 1 2.122 0l.293.292a.5.5 0 0 1-.707.708l-.293-.293z"/>

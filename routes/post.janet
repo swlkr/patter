@@ -1,5 +1,4 @@
 (use joy)
-(use ../helpers)
 
 
 (route :get "/posts/new" :posts/new)
@@ -73,9 +72,8 @@
   (def body (get body :body ""))
 
   (text/html
-    (modal
-     (form-with req (action-for :posts/create)
-       (posts/form {:body body :placeholder "What's up?"})))))
+    (form-with req (action-for :posts/create)
+      (posts/form {:body body :placeholder "What's up?"}))))
 
 
 (defn finder [str]
