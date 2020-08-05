@@ -8,8 +8,7 @@
 (defn like-button [post &opt like]
   [:form
     [:input {:type "hidden" :name "post-id" :value (get post :id)}]
-    [:a (merge {:href "#"
-                :hx-target ""}
+    [:a (merge {:href "#" :hx-swap "outerHTML"}
                (if like
                  {:hx-delete (url-for :likes/delete like)
                   :class "danger"}
@@ -47,7 +46,8 @@
 
   (def [errors like] result)
 
-  (like-button {:id (params :post-id)} like))
+  (text/html
+    (like-button {:id (params :post-id)} like)))
 
 
 (defn likes/delete [req]
@@ -55,4 +55,5 @@
 
   (db/delete like)
 
-  (like-button {:id (like :post-id)}))
+  (text/html
+    (like-button {:id (like :post-id)})))
