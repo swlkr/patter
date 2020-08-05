@@ -108,6 +108,7 @@
           [:hstack
            [:a {:hx-get (url-for :replies/new post)
                 :hx-target "#modal"
+                :hx-indicator "#loader"
                 :x-on:click "modal = true"
                 :href "#"}
             [:span {:class "mr-2xs"} replies]
