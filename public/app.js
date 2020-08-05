@@ -12,9 +12,17 @@ function timeAgo(seconds) {
 
   if (Math.floor(seconds / 31536000) > 1) { return null; }
   if (Math.floor(seconds / 2592000) > 1) { return null; }
-  if (Math.floor(seconds / 86400) > 1) { return null; }
 
-  var interval = Math.floor(seconds / 3600);
+  var interval = Math.floor(seconds / 86400);
+  if(interval > 1) {
+    return null;
+  }
+
+  if(interval === 1) {
+    return "about a day ago";
+  }
+
+  interval = Math.floor(seconds / 3600);
   if (interval > 1) {
     return interval + " hours ago";
   }
