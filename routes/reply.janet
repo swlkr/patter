@@ -21,7 +21,7 @@
 
   (text/html
     [:div
-     (posts/show {:post post})
+     (post (merge req {:post post}))
      (form-with req (action-for :replies/create post)
        (posts/form {:body body :placeholder (string "Reply to @" (account :name))}))]))
 
